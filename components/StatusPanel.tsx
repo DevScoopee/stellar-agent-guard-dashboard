@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { deadManRemaining, describePolicy, isDeadManFrozen } from "stellar-agent-guard-sdk";
 import { useGuard } from "./GuardProvider.tsx";
@@ -33,6 +33,7 @@ import {
 } from "../lib/guard/dmsSimulator.ts";
 import { evaluateDmsAlert, formatDmsDuration, type DmsAlert } from "../lib/guard/dmsAlert.ts";
 import { calculateVelocity } from "../lib/guard/velocity.ts";
+import { useStatusTransitionAnnouncer } from "../lib/guard/statusTransitions.ts";
 
 /**
  * The proactive dead-man-switch deadline banner, shown above the on-chain
@@ -99,6 +100,8 @@ function DmsAlertBanner({ alert }: { alert: DmsAlert }) {
 export function StatusPanel() {
   const { snapshot, snapshotError, refreshing, refresh, guard, wallet, retryRead, retryingField } =
     useGuard();
+
+  useStatusTransitionAnnouncer(snapshot);
 
   const printReport = snapshot
     ? compilePrintReport(snapshot, NETWORK.name, wallet?.address || "Disconnected")
