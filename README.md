@@ -121,6 +121,14 @@ npm run build        # Next.js production build
 npm run inspect      # read-only dump of an instance's state
 ```
 
+### Offline development against a local network
+
+`npm run sandbox` boots a local standalone Soroban network in Docker, deploys the _same_
+pinned guard artifact to it, and writes `.env.local` so the console talks to that node
+instead of public testnet — no dependency on public RPC nodes, and no wallet needed for
+reads or telemetry. See [Local sandbox](CONTRIBUTING.md#local-sandbox) for the startup
+steps and for what it does and does not prove.
+
 ## Screens & Actions Reference
 
 ### Screens
@@ -163,7 +171,7 @@ npm run inspect      # read-only dump of an instance's state
 
 ## Operator Runbooks
 
-Two step-by-step procedures cover the console's high-stakes operations. They are written to be followed under pressure, and both include CLI fallback commands for when the browser UI is unavailable.
+Three step-by-step procedures cover the console's high-stakes operations. They are written to be followed under pressure, and each includes CLI fallback commands for when the browser UI is unavailable.
 
 | Runbook                                                                                  | Use it when                                                                                                                                                                                                                                                                                                                                                                           |
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

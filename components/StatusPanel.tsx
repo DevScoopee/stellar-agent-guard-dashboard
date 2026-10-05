@@ -142,6 +142,9 @@ export function StatusPanel() {
                 read <TimeAgo iso={snapshot.fetchedAt} />
               </span>
             )}
+            <StorageExplorerButton />
+            <WebhookSettingsButton />
+            <WebhookAlertBridge />
             <button className="secondary no-print" onClick={() => window.print()}>
               Print Compliance Report
             </button>

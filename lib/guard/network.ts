@@ -103,15 +103,46 @@ export function explorerAccountUrl(address: string, network: NetworkDescriptor =
 }
 
 /**
+ * The network this build talks to.
+ *
+ * Defaults to public testnet. `scripts/start-local-sandbox.sh` points a
+ * development build at a local standalone node instead, through the three
+ * `NEXT_PUBLIC_*` values it writes into `.env.local`. The passphrase has to move
+ * together with the RPC URL — a signature produced for one network cannot
+ * authorize on another — which is exactly what the wallet check in
+ * `components/GuardProvider.tsx` reports when they disagree.
+ *
+ * These are public endpoints, never secrets, which is why they are the only thing
+ * in this file that a build may override.
+ */
+export const NETWORK = {
+  name: process.env.NEXT_PUBLIC_NETWORK_NAME ?? TESTNET.name,
+  rpcUrl: process.env.NEXT_PUBLIC_RPC_URL ?? TESTNET.rpcUrl,
+  passphrase: process.env.NEXT_PUBLIC_NETWORK_PASSPHRASE ?? TESTNET.passphrase,
+} as const;
+
+/**
+ * Phase 1's instance on public testnet: where the pinned artifact is published,
+ * and therefore where those bytes are read from when nothing overrides it.
+ */
+export const TESTNET_ARTIFACT_SOURCE = "CAYJZT4XH5SWDXNR7MZJCCUBIDAT2KZDDUTZ7OZQEMKCPJGD4P3X4CU7";
+
+/**
  * The Phase 1 artifact — the only WASM this dashboard will ever deploy.
  *
  * `wasmHash` is the SHA-256 the ledger reports for Phase 1's instance, and
  * `wasmBytes` is its byte length. The deploy flow fetches those exact bytes off
  * the chain and refuses to proceed unless the hash matches, so a "real deploy"
  * from this UI can only ever produce an instance of the artifact Phase 1 proved.
+ *
+ * `guard` is the instance those bytes are *read from* — Phase 1's address on
+ * public testnet. The local sandbox moves it to the instance it deploys locally,
+ * because a standalone network has no Phase 1 instance to read. The pin itself is
+ * not overridable: whatever the source is, its bytes must hash to `wasmHash` and
+ * measure `wasmBytes`, or the deploy is refused.
  */
 export const PHASE1_ARTIFACT = {
-  guard: "CAYJZT4XH5SWDXNR7MZJCCUBIDAT2KZDDUTZ7OZQEMKCPJGD4P3X4CU7",
+  guard: process.env.NEXT_PUBLIC_ARTIFACT_SOURCE_CONTRACT_ID ?? TESTNET_ARTIFACT_SOURCE,
   token: "CBLQLJAG72M4XQRJMQHSKYIFVHQD7LNTNOQH2GRMCMBWMSLBSLTGTJC7",
   wasmHash: "f47919f92e78fdd034836aa61955fc338dd56a218c448c37df1867a8c3da0f63",
   wasmBytes: 39673,
