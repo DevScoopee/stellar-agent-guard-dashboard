@@ -17,7 +17,16 @@ import { freezeFailed, freezeSubmitted, writeFailureReason } from "../lib/guard/
 import { announce } from "../lib/guard/useAnnounce.ts";
 import { NETWORK } from "../lib/guard/network.ts";
 import { useGuard } from "./GuardProvider.tsx";
-import { fleetTableState, fleetEmptyCopy } from "../lib/guard/fleetTableState.ts";
+import {
+  DEFAULT_FLEET_VIEW,
+  applyFleetView,
+  createFleetViewStore,
+  fleetTableState,
+  fleetEmptyCopy,
+  hasActiveFleetFilter,
+  isDefaultFleetView,
+  type FleetViewState,
+} from "../lib/guard/fleetTableState.ts";
 import { Skeleton, contractLink } from "./bits.tsx";
 import { useRouter } from "next/navigation";
 import { freighterSigner } from "../lib/guard/wallet.ts";

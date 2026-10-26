@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useGuard } from "./GuardProvider.tsx";
 import { fuzzyMatch, type CommandAction } from "../lib/guard/commands.ts";
 import { NETWORK } from "../lib/guard/network.ts";
+import { useAnnounce } from "../lib/guard/useAnnounce.ts";
 import { NetworkChip } from "./NetworkChip.tsx";
 
 export function CommandPaletteInner({

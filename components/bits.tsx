@@ -14,6 +14,7 @@ import {
   type NetworkDescriptor,
 } from "../lib/guard/network.ts";
 import { lookupLabel, subscribeAddressBook } from "../lib/guard/addressBook.ts";
+import { usePrivacy } from "../lib/guard/privacyStore.ts";
 import { NetworkChip } from "./NetworkChip.tsx";
 import { CopyButton } from "./CopyButton.tsx";
 import {

@@ -38,7 +38,14 @@ import {
   type ImportMode,
   type ImportPreview,
 } from "../lib/guard/addressBook.ts";
+import { validateLabel } from "../lib/guard/inputSanitizer.ts";
 import { NetworkChip } from "./NetworkChip.tsx";
+
+const ISSUE_LABELS = {
+  invalid: "Invalid",
+  "duplicate-address": "Duplicate",
+  "alias-conflict": "Alias conflict",
+} as const;
 
 export function AddressBookModal({ onClose }: { onClose: () => void }) {
   const [contacts, setContacts] = useState<Contact[]>(() => loadAddressBook());

@@ -69,6 +69,14 @@ import { writeControlState } from "../lib/guard/observerMode.ts";
 import { SECURITY_POLICY_URL, UNAUDITED_DISCLOSURE } from "../lib/guard/auditDisclosure.ts";
 import { MigrationWizard } from "./MigrationWizard.tsx";
 import { ErrorBlock, OutcomeList, starLink, WarningBanner } from "./bits.tsx";
+import {
+  compileDeploymentReceipt,
+  deploymentReceiptFilename,
+  formatDeploymentReceipt,
+  type DeploymentReceipt,
+} from "../lib/guard/printReport.ts";
+import { announce } from "../lib/guard/useAnnounce.ts";
+import { usePwaActivity } from "../lib/guard/usePwaActivity.ts";
 
 /** Either the chain's answer about the artifact, or why there is not one. */
 type ArtifactFetch = { artifact: ArtifactCheck } | { error: string };
@@ -607,12 +615,20 @@ export function DeployPanel() {
       <h3>What this deploy will do</h3>
       {!wallet ? (
         <p className="tiny muted">Connect the admin wallet to compute the contract address.</p>
-      ) : plan ? (
-        <div className="grid">
-          <div className="stat">
-            <div className="k">Predicted guard address</div>
-            <div className="v small mono" title={plan.predicted}>
-              {plan.predicted} <NetworkChip />
+      ) : predictionProblem ? (
+        <div className="error" role="alert">
+          <span className="t">No address can be predicted yet</span>
+          <span className="tiny">{predictionProblem}</span>
+        </div>
+      ) : (
+        <>
+          <div className="grid">
+            <div className="stat">
+              <div className="k">Deployer</div>
+              <div className="v small mono" title={prediction.deployerPublicKey}>
+                {prediction.deployerPublicKey}
+              </div>
+              <div className="n">the account that signs the create transaction</div>
             </div>
             <div className="stat">
               <div className="k">Salt (hex)</div>
@@ -629,7 +645,7 @@ export function DeployPanel() {
             <div className="stat">
               <div className="k">Predicted guard address</div>
               <div className="v small mono" title={plan?.predicted ?? undefined}>
-                {plan?.predicted ?? "recomputing…"}
+                {plan?.predicted ?? "recomputing…"} {plan && <NetworkChip />}
               </div>
               <div className="n">
                 computed before signing, then confirmed by reading the instance back{" "}
