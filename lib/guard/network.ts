@@ -56,10 +56,33 @@ export interface NetworkDescriptor {
   readonly explorerNetwork: string;
 }
 
-export const NETWORK: NetworkDescriptor = {
+/**
+ * The canonical public Stellar testnet: the defaults, and the network the pinned
+ * artifact is published on.
+ */
+export const TESTNET = {
   name: "testnet",
   rpcUrl: "https://soroban-testnet.stellar.org",
   passphrase: "Test SDF Network ; September 2015",
+} as const;
+
+/**
+ * The network this build talks to.
+ *
+ * Defaults to public testnet. `scripts/start-local-sandbox.sh` points a
+ * development build at a local standalone node instead, through the three
+ * `NEXT_PUBLIC_*` values it writes into `.env.local`. The passphrase has to move
+ * together with the RPC URL — a signature produced for one network cannot
+ * authorize on another — which is exactly what the wallet check in
+ * `components/GuardProvider.tsx` reports when they disagree.
+ *
+ * These are public endpoints, never secrets, which is why they are the only thing
+ * in this file that a build may override.
+ */
+export const NETWORK: NetworkDescriptor = {
+  name: process.env.NEXT_PUBLIC_NETWORK_NAME ?? TESTNET.name,
+  rpcUrl: process.env.NEXT_PUBLIC_RPC_URL ?? TESTNET.rpcUrl,
+  passphrase: process.env.NEXT_PUBLIC_NETWORK_PASSPHRASE ?? TESTNET.passphrase,
   explorerBaseUrl: "https://stellar.expert/explorer",
   explorerNetwork: "testnet",
 };
@@ -101,25 +124,6 @@ export function explorerContractUrl(
 export function explorerAccountUrl(address: string, network: NetworkDescriptor = NETWORK): string {
   return `${explorerBaseUrl(network)}/account/${address}`;
 }
-
-/**
- * The network this build talks to.
- *
- * Defaults to public testnet. `scripts/start-local-sandbox.sh` points a
- * development build at a local standalone node instead, through the three
- * `NEXT_PUBLIC_*` values it writes into `.env.local`. The passphrase has to move
- * together with the RPC URL — a signature produced for one network cannot
- * authorize on another — which is exactly what the wallet check in
- * `components/GuardProvider.tsx` reports when they disagree.
- *
- * These are public endpoints, never secrets, which is why they are the only thing
- * in this file that a build may override.
- */
-export const NETWORK = {
-  name: process.env.NEXT_PUBLIC_NETWORK_NAME ?? TESTNET.name,
-  rpcUrl: process.env.NEXT_PUBLIC_RPC_URL ?? TESTNET.rpcUrl,
-  passphrase: process.env.NEXT_PUBLIC_NETWORK_PASSPHRASE ?? TESTNET.passphrase,
-} as const;
 
 /**
  * Phase 1's instance on public testnet: where the pinned artifact is published,
